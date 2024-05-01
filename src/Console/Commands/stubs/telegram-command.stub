@@ -1,15 +1,14 @@
 <?php
-
-
 namespace DummyNamespace\Telegram\Commands;
 
-
+use PhpTelegramBot\Laravel\Traits\HasAdditionalFunc;
 use Longman\TelegramBot\Commands\DummyParent;
 use Longman\TelegramBot\Entities\ServerResponse;
 use Longman\TelegramBot\Exception\TelegramException;
 
 class DummyClass extends DummyParent
 {
+    use HasAdditionalFunc;
 
     /** @var string Command name */
     protected $name = '{{name}}';
@@ -22,7 +21,7 @@ class DummyClass extends DummyParent
 
     public function execute(): ServerResponse
     {
-
+        //
     }
 
 }
