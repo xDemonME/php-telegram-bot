@@ -56,22 +56,17 @@ trait HasConversation
     }
 
     /**
-     * @param callable|null $responseCallback
-     * @param bool|callable $validationCallback
+     * @param callable|array|Message|ServerResponse $callback
      * @return $this
      */
-    public function addConversationStep(null|callable|Message $responseCallback, bool|callable $validationCallback = true): static
+    public function addConversationStep(callable|array|Message|ServerResponse $callback): static
     {
-        $this->steps[] = [
-            'validate' => $validationCallback,
-            'respond'  => $responseCallback
-        ];
+        $this->steps[] = $callback;
         return $this;
     }
 
     protected function handleConversation(): ServerResponse
     {
-
         if ($this->text === 'Отменить') {
             $this->conversation->cancel();
             $message = (new Message)->setChatId($this->chatId)
@@ -83,25 +78,28 @@ trait HasConversation
         }
 
         for ($i = $this->state; $i < count($this->steps); $i++) {
-            $step = $this->steps[$i];
-            if (is_callable($step['validate'])) {
-                $validation = $step['validate']();
-                if ($validation instanceof Message) {
-                    return $validation->send();
+            $respond = null;
+            $isValid = false;
+            $step = is_callable($this->steps[$i]) ? $this->steps[$i]() : $this->steps[$i];
+
+            if (is_array($step)) {
+                if (count($step) === 2) {
+                    [$respond, $isValid] = $step;
+                } elseif (count($step) === 1) {
+                    [$respond] = $step;
                 }
             } else {
-                $validation = $step['validate'];
+                $respond = $step;
             }
 
-            $validation = $validation ?? true;
-            if ($step['respond'] && ($this->text === '' || !$validation)) {
+            if ($this->text === '' || !$isValid) {
                 $this->notes['state'] = $i;
                 $this->conversation->update();
 
-                $respond = is_callable($step['respond']) ? $step['respond']() : $step['respond'];
-
                 if($respond instanceof Message) {
                     return $respond->send();
+                } elseif ($respond instanceof ServerResponse) {
+                    return $respond;
                 }
             }
             $this->text = '';
@@ -109,4 +107,6 @@ trait HasConversation
 
         return Request::emptyResponse();
     }
+
+
 }
