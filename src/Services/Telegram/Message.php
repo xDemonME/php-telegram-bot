@@ -2,7 +2,8 @@
 
 namespace PhpTelegramBot\Laravel\Services\Telegram;
 
-use App\Models\CallbackMessage;
+use PhpTelegramBot\Laravel\Models\CallbackMessage;
+use Longman\TelegramBot\Entities\CallbackQuery;
 use Longman\TelegramBot\Entities\InlineKeyboard;
 use Longman\TelegramBot\Entities\Keyboard;
 use Longman\TelegramBot\Entities\ServerResponse;
@@ -68,7 +69,7 @@ class Message
     /**
      * Устанавливает запрос callback и обрабатывает его данные.
      */
-    public function setCallbackQuery($callbackQuery): static
+    public function setCallbackQuery(?CallbackQuery $callbackQuery = null): static
     {
         $this->callbackQuery = $callbackQuery;
         parse_str($this->callbackQuery?->getData(), $this->callbackData);
@@ -89,6 +90,11 @@ class Message
         $this->messageId = $messageId;
 
         return $this;
+    }
+
+    public function getMessageId(): ?int
+    {
+        return $this->messageId;
     }
 
     /**
@@ -143,9 +149,9 @@ class Message
     /**
      * Отключает предпросмотр страниц в сообщениях.
      */
-    public function disablePagePreview(): static
+    public function disablePagePreview($state = true): static
     {
-        $this->disablePagePreview = true;
+        $this->disablePagePreview = $state;
 
         return $this;
     }
@@ -189,6 +195,19 @@ class Message
         return $this;
     }
 
+    public function wait($text = "Идет загрузка... пожалуйста подождите..."): ServerResponse
+    {
+        $this->setCallbackQuery();
+        $message = clone $this;
+        $response = $message->setText($text)
+            ->removeKeyboard()
+            ->send();
+
+        $this->setMessageId($message->getMessageId());
+
+        return $response;
+    }
+
     /**
      * Конвертирует данные сообщения в массив.
      */
@@ -197,11 +216,20 @@ class Message
         $data = [
             'chat_id' => $this->chatId,
             'text' => $this->text,
-            'reply_markup' => $this->replyMarkup,
             'parse_mode' => $this->parseMode,
-            'message_id' => $this->messageId,
-            'disable_web_page_preview' => $this->disablePagePreview,
         ];
+
+        if ($this->replyMarkup) {
+            $data['reply_markup'] = $this->replyMarkup;
+        }
+
+        if ($this->disablePagePreview) {
+            $data['disable_web_page_preview'] = $this->disablePagePreview;
+        }
+
+        if ($this->messageId) {
+            $data['message_id'] = $this->messageId;
+        }
 
         if ($this->title) {
             $data['text'] = "<b>$this->title</b>" . PHP_EOL . PHP_EOL . $data['text'];
@@ -231,6 +259,7 @@ class Message
             $result = Request::editMessageText($data);
         } else {
             $result = Request::sendMessage($data);
+            $this->messageId = $result->getResult()?->message_id;
 
             if ($save && $this->callbackMessage) {
                 $this->callbackMessage->set($result);

@@ -69,6 +69,7 @@ trait HasConversation
     {
         if ($this->text === 'Отменить') {
             $this->conversation->cancel();
+            // TODO добавить метод для работы с отменой
             $message = (new Message)->setChatId($this->chatId)
                 ->setCallbackQuery($this->callbackQuery)
                 ->setText('Добавление новой записи было отменено.');
