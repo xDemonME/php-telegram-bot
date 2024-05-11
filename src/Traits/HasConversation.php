@@ -8,7 +8,7 @@ use Longman\TelegramBot\Entities\InlineKeyboard;
 use Longman\TelegramBot\Entities\Keyboard;
 use Longman\TelegramBot\Entities\ServerResponse;
 use Longman\TelegramBot\Request;
-use PhpTelegramBot\Laravel\Services\Telegram\Message;
+use PhpTelegramBot\Laravel\Services\Message;
 
 trait HasConversation
 {

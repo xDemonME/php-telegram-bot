@@ -1,13 +1,13 @@
 <?php
 
-namespace PhpTelegramBot\Laravel\Services\Telegram;
+namespace PhpTelegramBot\Laravel\Services;
 
-use PhpTelegramBot\Laravel\Models\CallbackMessage;
 use Longman\TelegramBot\Entities\CallbackQuery;
 use Longman\TelegramBot\Entities\InlineKeyboard;
 use Longman\TelegramBot\Entities\Keyboard;
 use Longman\TelegramBot\Entities\ServerResponse;
 use Longman\TelegramBot\Request;
+use PhpTelegramBot\Laravel\Models\CallbackMessage;
 
 class Message
 {
