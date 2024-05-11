@@ -7,6 +7,7 @@ use Longman\TelegramBot\Entities\InlineKeyboard;
 use Longman\TelegramBot\Entities\Keyboard;
 use Longman\TelegramBot\Entities\ServerResponse;
 use Longman\TelegramBot\Request;
+use PhpTelegramBot\Laravel\Facades\Telegram;
 use PhpTelegramBot\Laravel\Models\CallbackMessage;
 
 class Message
@@ -66,6 +67,12 @@ class Message
      */
     protected $callbackData = null;
 
+    public function __construct()
+    {
+        $this->setChatId(Telegram::getChatId());
+        $this->setCallbackQuery(Telegram::getCallbackQuery());
+    }
+
     /**
      * Устанавливает запрос callback и обрабатывает его данные.
      */
@@ -75,7 +82,7 @@ class Message
         parse_str($this->callbackQuery?->getData(), $this->callbackData);
         $this->callbackMessage = CallbackMessage::get($this->chatId, $this->callbackData);
 
-        if ($this->callbackMessage->exists) {
+        if ($this->callbackMessage?->exists) {
             $this->messageId = $this->callbackMessage->message_id;
         }
 
@@ -276,7 +283,7 @@ class Message
     public function callback(string $command, array $data = [], $asNewMessage = false): string
     {
         $data['command'] = $command;
-        if(!$asNewMessage && $this->callbackMessage->uuid) {
+        if(!$asNewMessage && $this->callbackMessage?->uuid) {
             $data['uuid'] = (string) $this->callbackMessage->uuid;
         }
         return http_build_query($data);

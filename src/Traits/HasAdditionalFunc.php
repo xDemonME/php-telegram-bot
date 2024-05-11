@@ -2,26 +2,13 @@
 
 namespace PhpTelegramBot\Laravel\Traits;
 
-use Longman\TelegramBot\Entities\CallbackQuery;
-use Longman\TelegramBot\Entities\Chat;
-use Longman\TelegramBot\Entities\Message;
 use Longman\TelegramBot\Entities\ServerResponse;
-use Longman\TelegramBot\Entities\User;
+use PhpTelegramBot\Laravel\Facades\Telegram;
 use PhpTelegramBot\Laravel\Models\CallbackMessage;
 
-trait HasAdditionalFunc
+trait InitChat
 {
-    protected ?CallbackQuery $callbackQuery;
     protected array $callbackData = [];
-    protected ?Message $message;
-    protected ?string $text;
-
-    protected Chat $chat;
-    protected int $chatId;
-
-    protected User $user;
-    protected int $userId;
-
     protected CallbackMessage $botMessage;
 
     public function preExecute(): ServerResponse
@@ -32,16 +19,14 @@ trait HasAdditionalFunc
 
     protected function init(): void
     {
-        $this->callbackQuery = $this->getCallbackQuery() ?? null;
-        parse_str($this->callbackQuery?->getData(), $this->callbackData);
+        $callbackQuery = $this->getCallbackQuery() ?? null;
+        parse_str($callbackQuery?->getData(), $this->callbackData);
 
-        $this->message = $this->getMessage() ?? $this->callbackQuery?->getMessage() ?? null;
-        $this->text = trim($this->getMessage()?->getText(true));
+        $message = $this->getMessage() ?? $callbackQuery?->getMessage() ?? null;
+        $text = $this->getMessage()?->getText(true);
 
-        $this->chat = $this->message->getChat();
-        $this->chatId = $this->chat->getId();
-
-        $this->user = $this->message->getFrom();
-        $this->userId = $this->user->getId();
+        Telegram::setCallbackQuery($callbackQuery);
+        Telegram::setMessage($message);
+        Telegram::setText($text);
     }
 }

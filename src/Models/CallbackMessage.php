@@ -18,8 +18,7 @@ class CallbackMessage extends Model
     protected $table = 'bot_callback_messages';
     protected $guarded = [];
 
-    public static function get($chat_id, ?array $callback_data = null) {
-
+    public static function get(int|string $chat_id, ?array $callback_data = null) {
         if(!empty($callback_data['uuid'])) {
             $botMessage = self::where('timestamp', $callback_data['uuid'])->where('chat_id', $chat_id)->first();
         } else {

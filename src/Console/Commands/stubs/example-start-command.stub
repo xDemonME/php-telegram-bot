@@ -1,14 +1,14 @@
 <?php
 namespace DummyRootNamespace\Telegram\Commands;
 
-use PhpTelegramBot\Laravel\Traits\HasAdditionalFunc;
+use PhpTelegramBot\Laravel\Traits\InitChat;
 use Longman\TelegramBot\Commands\UserCommand;
 use Longman\TelegramBot\Entities\ServerResponse;
 use Longman\TelegramBot\Exception\TelegramException;
 
 class StartCommand extends UserCommand
 {
-    use HasAdditionalFunc;
+    use InitChat;
 
     /** @var string Command name */
     protected $name = 'start';

@@ -70,10 +70,9 @@ trait HasConversation
         if ($this->text === 'Отменить') {
             $this->conversation->cancel();
             // TODO добавить метод для работы с отменой
-            $message = (new Message)->setChatId($this->chatId)
-                ->setCallbackQuery($this->callbackQuery)
-                ->setText('Добавление новой записи было отменено.');
+            $message = new Message;
             return $message
+                ->setText('Добавление новой записи было отменено.')
                 ->setKeyboard(new InlineKeyboard([$message->callbackButton('Вернуться в панель управления', 'adminpanel')]))
                 ->send();
         }
