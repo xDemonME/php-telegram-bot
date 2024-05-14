@@ -18,8 +18,8 @@
     "homepage": "https://github.com/php-telegram-bot/laravel",
     "keywords": ["laravel", "telegram", "bot"],
     "require": {
-        "illuminate/support": "~7|~8|~9|~10",
-        "longman/telegram-bot": "^0.81",
+        "illuminate/support": "~7|~8|~9|~10|~11",
+        "longman/telegram-bot": "^0.82",
         "ext-pcntl": "*"
     },
     "require-dev": {

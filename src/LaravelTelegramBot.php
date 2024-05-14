@@ -9,10 +9,10 @@ use Longman\TelegramBot\Entities\ServerResponse;
 use Longman\TelegramBot\Entities\Update;
 use Longman\TelegramBot\Entities\User;
 use Longman\TelegramBot\Request;
+use PhpTelegramBot\Laravel\Models\CallbackMessage;
 
 class LaravelTelegramBot
 {
-
     private Message $message;
     protected Chat $chat;
     protected User $user;
@@ -20,7 +20,8 @@ class LaravelTelegramBot
     protected int $userId;
     protected ?CallbackQuery $callbackQuery = null;
     protected ?string $text;
-
+    private ?array $callbackData;
+    private CallbackMessage $callbackMessage;
     protected array $callbacks = [];
 
     public function register(callable $callback)
@@ -116,11 +117,31 @@ class LaravelTelegramBot
     public function setCallbackQuery(?CallbackQuery $callbackQuery): static
     {
         $this->callbackQuery = $callbackQuery;
+        parse_str($this->callbackQuery?->getData(), $this->callbackData);
+        $this->setCallbackMessage(CallbackMessage::get($this->chatId, $this->callbackData));
         return $this;
     }
 
     public function getCallbackQuery(): ?CallbackQuery
     {
         return $this->callbackQuery;
+    }
+
+    public function setCallbackData(?array $callbackData): static
+    {
+        $this->callbackData = $callbackData;
+        $this->setCallbackMessage(CallbackMessage::get($this->chatId, $this->callbackData));
+        return $this;
+    }
+
+    public function setCallbackMessage(CallbackMessage $callbackMessage): static
+    {
+        $this->callbackMessage = $callbackMessage;
+        return $this;
+    }
+
+    public function getCallbackMessage(): CallbackMessage
+    {
+        return $this->callbackMessage;
     }
 }

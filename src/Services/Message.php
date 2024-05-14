@@ -60,17 +60,22 @@ class Message
     /**
      * Запрос callback.
      */
-    protected $callbackQuery = null;
+    protected ?CallbackQuery $callbackQuery = null;
 
     /**
      * Данные запроса callback.
      */
-    protected $callbackData = null;
+    protected ?array $callbackData = null;
 
     public function __construct()
     {
         $this->setChatId(Telegram::getChatId());
         $this->setCallbackQuery(Telegram::getCallbackQuery());
+    }
+
+    public function new(): self
+    {
+        return clone $this;
     }
 
     /**
@@ -87,6 +92,11 @@ class Message
         }
 
         return $this;
+    }
+
+    public function getCallbackMessage(): ?CallbackMessage
+    {
+        return $this->callbackMessage;
     }
 
     /**
@@ -275,25 +285,5 @@ class Message
         \Log::debug('data', $data);
         \Log::debug("result {$result->toJson()}");
         return $this->callbackQuery ? $this->callbackQuery->answer() : $result;
-    }
-
-    /**
-     * Генерирует данные для callback кнопки.
-     */
-    public function callback(string $command, array $data = [], $asNewMessage = false): string
-    {
-        $data['command'] = $command;
-        if(!$asNewMessage && $this->callbackMessage?->uuid) {
-            $data['uuid'] = (string) $this->callbackMessage->uuid;
-        }
-        return http_build_query($data);
-    }
-
-    /**
-     * Создает кнопку с callback данными.
-     */
-    public function callbackButton($name, string $command, array $data = [], $asNewMessage = false): array
-    {
-        return ['text' => $name, 'callback_data' => $this->callback($command, $data, $asNewMessage)];
     }
 }

@@ -25,8 +25,8 @@ trait InitChat
         $message = $this->getMessage() ?? $callbackQuery?->getMessage() ?? null;
         $text = $this->getMessage()?->getText(true);
 
-        Telegram::setCallbackQuery($callbackQuery);
         Telegram::setMessage($message);
+        Telegram::setCallbackQuery($callbackQuery);
         Telegram::setText($text);
     }
 }
