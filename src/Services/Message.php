@@ -69,8 +69,16 @@ class Message
 
     public function __construct()
     {
-        $this->setChatId(Telegram::getChatId());
-        $this->setCallbackQuery(Telegram::getCallbackQuery());
+        $chatId = Telegram::getChatId();
+        $callbackQuery = Telegram::getCallbackQuery();
+
+        if ($chatId) {
+            $this->setChatId($chatId);
+        }
+
+        if ($callbackQuery) {
+            $this->setCallbackQuery($callbackQuery);
+        }
     }
 
     public function new(): self
