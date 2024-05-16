@@ -13,15 +13,15 @@ use PhpTelegramBot\Laravel\Models\CallbackMessage;
 
 class LaravelTelegramBot
 {
-    private Message $message;
-    protected Chat $chat;
-    protected User $user;
-    protected int|string $chatId;
-    protected int $userId;
+    private ?Message $message = null;
+    protected ?Chat $chat = null;
+    protected ?User $user = null;
+    protected null|int|string $chatId = null;
+    protected null|int $userId = null;
     protected ?CallbackQuery $callbackQuery = null;
     protected ?string $text;
-    private ?array $callbackData;
-    private CallbackMessage $callbackMessage;
+    private ?array $callbackData = null;
+    private ?CallbackMessage $callbackMessage = null;
     protected array $callbacks = [];
 
     public function register(callable $callback)
