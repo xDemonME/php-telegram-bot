@@ -52,7 +52,7 @@ class LaravelTelegramBot
         return $this;
     }
 
-    public function getMessage(): Message
+    public function getMessage(): ?Message
     {
         return $this->message;
     }
@@ -64,7 +64,7 @@ class LaravelTelegramBot
         return $this;
     }
 
-    public function getChat(): Chat
+    public function getChat(): ?Chat
     {
         return $this->chat;
     }
@@ -75,7 +75,7 @@ class LaravelTelegramBot
         return $this;
     }
 
-    public function getChatId(): int|string
+    public function getChatId(): null|int|string
     {
         return $this->chatId;
     }
@@ -87,7 +87,7 @@ class LaravelTelegramBot
         return $this;
     }
 
-    public function getUser(): User
+    public function getUser(): ?User
     {
         return $this->user;
     }
@@ -98,7 +98,7 @@ class LaravelTelegramBot
         return $this;
     }
 
-    public function getUserId(): int|string
+    public function getUserId(): null|int|string
     {
         return $this->userId;
     }
